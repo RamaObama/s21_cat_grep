@@ -16,6 +16,7 @@
 #define S21_CAT_GREP_CAT_S21_CAT_H_
 
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
   int b;  // Нумеровать строки, как и при указании опции -n, но пустые строки не нумеруются.
@@ -33,5 +34,7 @@ int initFlags(Flags *flags);
 int getFlags(Flags *flags, char c);
 
 int parserFlags(Flags *flags, char *str);
+
+int getFile(Flags *flags, char *file_name, int dis, int *shift);
 
 #endif //S21_CAT_GREP_CAT_S21_CAT_H_

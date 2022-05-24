@@ -32,6 +32,7 @@ int initFlags(Flags *flags) {
 }
 /**
  * @brief Получаем флаги и даем вес что ли если такой флаг существует если нет то ошибка
+ *
  * @param flags
  * @param c
  * @return
@@ -81,6 +82,27 @@ int parserFlags(Flags *flags, char *str) {
   }
   return error;
 }
+/**
+ *
+ * @param flags -- структура флагов
+ * @param file_name -- имя файла
+ * @param dis
+ * @param shift сдвиг
+ * @return
+ */
+int getFile(Flags *flags, char *file_name, int dis, int *shift) {
+  if (flags->b) flags->n = 0;
+  if (flags->e || flags->t) flags->v = 1;
+  char temp;
+  FILE *file;
+  file = fopen(file_name, "r");
+  if (file == NULL)
+    printf("cat: Can't open '%s': No such file or directory!\n", file_name);
+  else
+    printf("OK!");
+  
+  return dis;
+}
 
 int main(int args, char *argv[]) {
   int error = 0;
@@ -95,6 +117,13 @@ int main(int args, char *argv[]) {
       }
     }
   }
-
-  return error;
+  if (!error) {
+    int dis = 1, shift = 1;
+    for (int i = 1; i < args; i++) {
+      if (argv[i][0] != '-') {
+        dis = getFile(&flags, argv[i], dis, &shift);
+      }
+    }
+  }
+  return 0;
 }
