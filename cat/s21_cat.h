@@ -30,4 +30,8 @@ typedef struct {
 
 int initFlags(Flags *flags);
 
+int getFlags(Flags *flags, char c);
+
+int parserFlags(Flags *flags, char *str);
+
 #endif //S21_CAT_GREP_CAT_S21_CAT_H_
