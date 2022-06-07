@@ -5,7 +5,7 @@
  * @brief Cat is one of the most frequently used commands on Unix-like operating
  * systems. It has three related functions with regard to text files: displaying
  * them, combining copies of them and creating new ones.
- * @version 0.2
+ * @version 1.0
  * @date 2022-05-24
  *
  * @copyright Copyright (c) 2022
@@ -52,15 +52,18 @@ void cat(int argc, char *argv[]) {
         FILE *file_name = fopen(argv[i], "r");
         if (file_name) {
             int start_line = 1;
-            int count_empty_line = 1;  // count line for flags->b -- numbers only non-empty lines
-            int count_all_line = 1;  // count line for flags->n -- number all output lines
+            // count line for flags->b -- numbers only non-empty lines
+            int count_empty_line = 1;
+            // count line for flags->n -- number all output lines
+            int count_all_line = 1;
             char previous_line = '\n';
             char next_line = '\n';
             char ch[1024] = {'\0'};
 
             while ((*ch = fgetc(file_name)) != EOF) {
                 if (flags.s && handle_flag_s(previous_line, next_line, *ch)) continue;
-                if (flags.n) start_line = handle_flag_n(start_line, &count_all_line, *ch);
+                if (flags.n)
+                    start_line = handle_flag_n(start_line, &count_all_line, *ch);
                 if (flags.b) handle_flag_b(previous_line, &count_empty_line, *ch);
                 if (flags.E) handle_flag_E(*ch);
                 if (flags.v) handle_flag_v(ch);
@@ -78,7 +81,8 @@ void cat(int argc, char *argv[]) {
         }
     }
     if (error)
-        printf("cat: illegal option -- '%s'.\nTry 'man cat' for more information.", argv[i - 1]);
+        printf("cat: illegal option -- '%s'.\nTry 'man cat' for more information.",
+               argv[i - 1]);
 }
 
 // [0] Flag b [1]
@@ -96,15 +100,12 @@ int handle_flag_v(char *ch) {
 }
 // [2] Flag E
 int handle_flag_E(char ch) {
-    if (ch == '\n')
-        printf("$");
+    if (ch == '\n') printf("$");
     return ch == '\n';
-    return 1;
 }
 // [3] Flag n
 int handle_flag_n(int start_line, int *count_all_line, char ch) {
-    if (start_line)
-        printf("%6d\t", (*count_all_line)++);
+    if (start_line) printf("%6d\t", (*count_all_line)++);
     return ch == '\n';
 }
 // [4] Flag s
@@ -115,23 +116,19 @@ int handle_flag_s(char previous_line, char next_line, char ch) {
 // [5] Flag T
 int handle_flag_T(char ch) {
     int tab = 0;
-    if (ch == '\t')
-        tab = printf("^I");
+    if (ch == '\t') tab = printf("^I");
     return tab;
 }
 
 int getFlags(char *argv, Flags *flags) {
     int error = 0;
-    if (strlen(argv) == 1 || strlen(argv) != strspn(argv, "-bvEnsTet"))
-        error = 1;
-    if (!strcmp(argv, "--number"))
-        flags->n = 1;
-    if (!strcmp(argv, "--number-nonblank"))
-        flags->b = 1;
+    if (strlen(argv) == 1 || strlen(argv) != strspn(argv, "-bvEnsTet")) error = 1;
+    if (!strcmp(argv, "--number")) flags->n = 1;
+    if (!strcmp(argv, "--number-nonblank")) flags->b = 1;
     if (!strcmp(argv, "--squeeze-blank"))
         flags->s = 1;
     else {
-        if (strchr(argv, 'b'))  flags->b = 1;
+        if (strchr(argv, 'b')) flags->b = 1;
         if (strchr(argv, 'e')) {
             flags->v = 1;
             flags->E = 1;
