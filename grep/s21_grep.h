@@ -11,7 +11,8 @@
  */
 
 /*
- * TODO:
+ * TODO: implementation flag >> a
+ * TODO: 1. Парсер
  */
 
 #ifndef S21_CAT_GREP_GREP_S21_GREP_H_
@@ -21,12 +22,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <stdbool.h>
+
 #define BUFF 1024
 
 typedef struct {
   int e;  // Pattern.
   int i;  // Ignore uppercase vs. lowercase.
-  int v;  // Invert match.
+  int v;  // Invert match.3
   int c;  // Output count of matching lines only.
   int l;  // Output matching files only.
   int n;  // Precede each matching line with a line number.
@@ -36,21 +39,27 @@ typedef struct {
   int o;  // Output the matched parts of a matching line.
 } Flags;
 
-enum {
-  OK = 0,
-  FAIL = 1,
-  FLAG_DOES_NOT_EXIST = 2,
-  FAIL_DOES_NOT_EXIST = 3
-};
+void _grep(int argc, char *argv[]);
 
-int initFlags(Flags *flags);
+int _init_flags(Flags *flags);
 
-int countFiles(char *file_names[]);
+/**
+ * @brief            : Требуется реализовать инициализацию флагов, которые будут определенны после знака '-'
+ * @param argv      -- Переданный массив флагов.
+ * @param flags      -- стркутра допустимых флагов, которые будут получать true(1) если были переданы.
+ *                     через argv
+ * @return error    -- возврщаем ошибку, если argv - был получен не допустимый флаг.
+ */
+int _get_flags(char *argv, Flags *flags);
 
-int getFlags(Flags *flags, int argc, char *argv[], char *file_names[], char *patterns[]);
+/** [1]
+ * @brief            : Требуется реализоват получение файла, для дальнейшей работы с файлом.
+ * @param argc
+ * @param argv
+ * @param flags
+ */
+void _get_files(int argc, char *argv[], Flags *flags);
 
-int parserFlags(Flags *flags, int argc, char *argv[]);
 
-void grep(int count);
 
 #endif  // S21_CAT_GREP_GREP_S21_GREP_H_
