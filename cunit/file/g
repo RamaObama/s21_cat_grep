@@ -1,0 +1,8 @@
+VEST is based on a balanced T-function that can also be described as a bijective nonlinear feedback shift regis
+ter 
+
+  32423  32
+
+with parallel feedback (NLPFSR) or as a substitution-permutation network, which 
+is assisted by a non-linear RNS-based counter. The four VEST family trees described in the cipher specification are VEST-4, 
+VEST-8, VEST-16, and VEST-32. VEST ciphers support keys and IVs of variable sizes and instant re-keying. All VEST ciphers release output on every clock cycle.
