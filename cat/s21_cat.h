@@ -5,7 +5,7 @@
  * @brief Cat is one of the most frequently used commands on Unix-like operating
  * systems. It has three related functions with regard to text files: displaying
  * them, combining copies of them and creating new ones.
- * @version 0.1
+ * @version 1.0
  * @date 2022-05-24
  *
  * @copyright Copyright (c) 2022
@@ -69,7 +69,7 @@ int handle_flag_b(char previous_line, int *count_empty_line, char ch);
 
 int handle_flag_n(int start_line, int *count_all_line, char ch);
 
-int handle_flag_s(char previous_line, char next_line, char ch);
+int handle_flag_s(char previous_char, char next_char, char ch);
 
 int handle_flag_v(char *ch);
 

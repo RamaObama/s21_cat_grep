@@ -52,23 +52,22 @@ void cat(int argc, char *argv[]) {
         FILE *file_name = fopen(argv[i], "r");
         if (file_name) {
             int start_line = 1;
-            // count line for flags->b -- numbers only non-empty lines
+            // count line for flags->b -- numbers only no-empty lines
             int count_empty_line = 1;
             // count line for flags->n -- number all output lines
             int count_all_line = 1;
-            char previous_line = '\n';
-            char next_line = '\n';
+            char previous_char = '\n';
+            char next_char = ' ';
             char ch[1024] = {'\0'};
 
             while ((*ch = fgetc(file_name)) != EOF) {
-                if (flags.s && handle_flag_s(previous_line, next_line, *ch)) continue;
-                if (flags.n)
-                    start_line = handle_flag_n(start_line, &count_all_line, *ch);
-                if (flags.b) handle_flag_b(previous_line, &count_empty_line, *ch);
+                if (flags.s && handle_flag_s(previous_char, next_char, *ch)) continue;
+                if (flags.n) start_line = handle_flag_n(start_line, &count_all_line, *ch);
+                if (flags.b) handle_flag_b(previous_char, &count_empty_line, *ch);
                 if (flags.E) handle_flag_E(*ch);
                 if (flags.v) handle_flag_v(ch);
-                next_line = previous_line;
-                previous_line = *ch;
+                next_char = previous_char;
+                previous_char = *ch;
                 if (flags.T && handle_flag_T(*ch)) continue;
                 if (*ch == '\0')
                     fputc(*ch, stdout);
@@ -79,41 +78,40 @@ void cat(int argc, char *argv[]) {
         } else {
             printf("cat: Can't open '%s': No such file or directory!\n", argv[i]);
         }
+        fclose(file_name);
     }
     if (error)
         printf("cat: illegal option -- '%s'.\nTry 'man cat' for more information.",
                argv[i - 1]);
 }
 
-// [0] Flag b [1]
-int handle_flag_b(char previous_line, int *count_empty_line, char ch) {
-    if (previous_line == '\n' && ch != '\n')
+int handle_flag_b(char previous_char, int *count_empty_line, char ch) {
+    if (previous_char == '\n' && ch != '\n')
         printf("%6d\t", (*count_empty_line)++);
     return ch == '\n';
 }
-// [1] Flag v
+
 int handle_flag_v(char *ch) {
-    unsigned char tmp = *ch;
+    unsigned char tmp = *ch; // 124
     if ((tmp <= 8) || (tmp >= 11 && tmp <= 31) || (tmp >= 127 && tmp <= 159))
         strcpy(ch, special_symbol[tmp]);
     return tmp;
 }
-// [2] Flag E
+
 int handle_flag_E(char ch) {
     if (ch == '\n') printf("$");
     return ch == '\n';
 }
-// [3] Flag n
+
 int handle_flag_n(int start_line, int *count_all_line, char ch) {
     if (start_line) printf("%6d\t", (*count_all_line)++);
     return ch == '\n';
 }
-// [4] Flag s
-int handle_flag_s(char previous_line, char next_line, char ch) {
-    return ch == '\n' && previous_line == '\n' && next_line == '\n';
+
+int handle_flag_s(char previous_char, char next_char, char ch) {
+    return ch == '\n' && previous_char == '\n' && next_char == '\n';
 }
 
-// [5] Flag T
 int handle_flag_T(char ch) {
     int tab = 0;
     if (ch == '\t') tab = printf("^I");
@@ -123,11 +121,18 @@ int handle_flag_T(char ch) {
 int getFlags(char *argv, Flags *flags) {
     int error = 0;
     if (strlen(argv) == 1 || strlen(argv) != strspn(argv, "-bvEnsTet")) error = 1;
-    if (!strcmp(argv, "--number")) flags->n = 1;
-    if (!strcmp(argv, "--number-nonblank")) flags->b = 1;
-    if (!strcmp(argv, "--squeeze-blank"))
+    if (!strcmp(argv, "--number")) {
+        error = 0;
+        flags->n = 1;
+    }
+    else if (!strcmp(argv, "--number-nonblank")) {
+        error = 0;
+        flags->b = 1;
+    }
+    else if (!strcmp(argv, "--squeeze-blank")) {
+        error = 0;
         flags->s = 1;
-    else {
+    } else {
         if (strchr(argv, 'b')) flags->b = 1;
         if (strchr(argv, 'e')) {
             flags->v = 1;
